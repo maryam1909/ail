@@ -1,0 +1,49 @@
+import heapq
+
+def build_undirected_graph_from_input():
+    graph = {}
+    n = int(input("Enter number of edges: "))
+    for _ in range(n):
+        src = input("Source node: ")
+        dest = input("Destination node: ")
+        weight = int(input("Weight: "))
+        graph.setdefault(src, []).append((dest, weight))
+        graph.setdefault(dest, []).append((src, weight))
+    return graph
+
+def astar(graph, start, goal, heuristic):
+    queue = [(0 + heuristic.get(start, 0), 0, start, [start])]
+    visited = set()
+    while queue:
+        est_total, cost, node, path = heapq.heappop(queue)
+        if node == goal:
+            return path, cost
+        if node in visited:
+            continue
+        visited.add(node)
+        for neighbor, weight in graph.get(node, []):
+            if neighbor not in visited:
+                heapq.heappush(queue, (cost + weight + heuristic.get(neighbor, 0), cost + weight, neighbor, path + [neighbor]))
+    return None, float('inf')
+
+def main():
+    graph = build_undirected_graph_from_input()
+
+    heuristic = {}
+    print("\nEnter heuristic values for each node:")
+    for node in graph.keys():
+        if node not in heuristic:
+            heuristic[node] = int(input(f"Heuristic value for {node}: "))
+
+    start = input("\nEnter start node: ")
+    goal = input("Enter goal node: ")
+
+    path, cost = astar(graph, start, goal, heuristic)
+    if path:
+        print(f"\nShortest Path: {path}")
+        print(f"Total Cost: {cost}")
+    else:
+        print("\nNo path found!")
+
+if __name__ == "__main__":
+    main()
