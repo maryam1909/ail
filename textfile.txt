@@ -1,0 +1,65 @@
+import re
+
+import nltk
+from nltk.corpus import stopwords
+from nltk.tokenize import word_tokenize
+from textblob import TextBlob
+
+# Download necessary NLTK data
+nltk.download('punkt')
+nltk.download('stopwords')
+nltk.download('punkt_tab')  # Download punkt_tab if needed
+
+# a. Text cleaning (remove punctuation, special characters, numbers, and extra spaces)
+def clean_text(text):
+    # Remove punctuation, special characters, and numbers using regular expression
+    text = re.sub(r'[^a-zA-Z\s]', '', text)  # Remove anything that's not a letter or space
+    # Remove extra white spaces
+    text = re.sub(r'\s+', ' ', text).strip()
+    return text
+
+# b. Convert text to lowercase
+def convert_to_lowercase(text):
+    return text.lower()
+
+# c. Tokenization
+def tokenize_text(text):
+    return word_tokenize(text)
+
+# d. Remove stop words
+def remove_stop_words(tokens):
+    stop_words = set(stopwords.words('english'))
+    return [word for word in tokens if word not in stop_words]
+
+# e. Correct misspelled words
+def correct_spelling(tokens):
+    return [str(TextBlob(word).correct()) for word in tokens]
+
+# Main function to perform all tasks
+def process_text(file_path):
+    with open(file_path, 'r') as file:
+        text = file.read()
+
+    # Step a: Clean the text
+    cleaned_text = clean_text(text)
+
+    # Step b: Convert to lowercase
+    cleaned_text = convert_to_lowercase(cleaned_text)
+
+    # Step c: Tokenization
+    tokens = tokenize_text(cleaned_text)
+
+    # Step d: Remove stop words
+    filtered_tokens = remove_stop_words(tokens)
+
+    # Step e: Correct misspelled words
+    corrected_tokens = correct_spelling(filtered_tokens)
+
+    # Print final output after all tasks
+    print("Cleaned, Tokenized, and Corrected Text:")
+    print(" ".join(corrected_tokens))
+
+# Example usage
+if __name__ == "__main__":
+    file_path = "sample.txt"  # Path to your text file
+    process_text(file_path)
