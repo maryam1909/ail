@@ -1,0 +1,49 @@
+import os
+import re
+
+from sklearn.feature_extraction.text import CountVectorizer
+
+
+# Function to read the content of a text file
+def read_file(file_path):
+    with open(file_path, 'r') as file:
+        content = file.read()
+    return content
+
+# Function to clean and preprocess the text
+def clean_text(text):
+    # Remove numbers, punctuation, and extra spaces
+    text = re.sub(r'[^A-Za-z\s]', '', text)
+    text = re.sub(r'\s+', ' ', text)
+    text = text.strip().lower()
+    return text
+
+# Function to process the text files and extract features
+def process_files(file_paths):
+    corpus = []
+    for file_path in file_paths:
+        content = read_file(file_path)
+        cleaned_content = clean_text(content)
+        corpus.append(cleaned_content)
+    
+    # Implementing Bag of Words using CountVectorizer
+    vectorizer = CountVectorizer()
+    X = vectorizer.fit_transform(corpus)
+    
+    return X, vectorizer.get_feature_names_out()
+
+# Main function to process the text files
+def main():
+    file_paths = ['sample1.txt', 'sample2.txt', 'sample3.txt']  # Add your file paths here
+    
+    # Process the files
+    X, feature_names = process_files(file_paths)
+    
+    # Display the Bag of Words model (feature names and the corresponding word counts)
+    print("Bag of Words Model (Word Count Matrix):\n")
+    print(X.toarray())
+    print("\nFeature Names (Vocabulary):\n")
+    print(feature_names)
+
+if __name__ == "__main__":
+    main()
