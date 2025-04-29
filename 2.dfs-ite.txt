@@ -1,0 +1,26 @@
+graph = {}
+n = int(input("Number of Edges: "))
+for i in range(n):
+    u, v = input("Enter edge (u v): ").split()
+    if u not in graph:
+        graph[u] = []
+    if v not in graph:
+        graph[v] = []
+    graph[u].append(v)
+    graph[v].append(u)  # because undirected graph
+
+visited = []
+
+def dfs_non_recursive(start):
+    stack = [start]
+    while stack:
+        node = stack.pop()
+        if node not in visited:
+            print(node)
+            visited.append(node)
+            for neighbor in graph[node]:
+                if neighbor not in visited:  
+                    stack.append(neighbor)
+
+start_node = input("Enter starting node: ")
+dfs_non_recursive(start_node)
