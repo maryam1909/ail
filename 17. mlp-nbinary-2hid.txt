@@ -1,0 +1,73 @@
+import numpy as np
+
+n = int(input("Enter the number of inputs: "))
+total_cases = 2 ** n
+
+# Generate all possible binary inputs
+inputs = np.array([[int(x) for x in format(i, f'0{n}b')] for i in range(total_cases)])
+
+# Get expected outputs from user
+expected_outputs = []
+print("\nEnter the expected output for each combination:")
+for row in inputs:
+    print(f"Input: {row} -> Expected Output: ", end="")
+    expected_outputs.append(int(input()))
+expected_outputs = np.array(expected_outputs)
+
+# Network structure and biases
+hidden1_neurons = n
+hidden2_neurons = n
+
+bias1 = float(input("\nEnter bias for Hidden Layer 1: "))
+bias2 = float(input("Enter bias for Hidden Layer 2: "))
+bias3 = float(input("Enter bias for Output Layer: "))
+
+# Initialize random weights
+weights1 = np.random.randn(n, hidden1_neurons)
+weights2 = np.random.randn(hidden1_neurons, hidden2_neurons)
+weights3 = np.random.randn(hidden2_neurons)
+
+training_step = 0
+
+# Brute-force training loop
+while True:
+    training_step += 1
+    found = True
+    outputs = []
+    
+    for i in range(total_cases):
+        net1 = np.dot(inputs[i], weights1) + bias1
+        net1 = np.tanh(net1)
+        
+        net2 = np.dot(net1, weights2) + bias2
+        net2 = np.tanh(net2)
+        
+        net3 = np.dot(net2, weights3) + bias3
+        output = 1 if net3 > 0 else 0
+        outputs.append(output)
+        
+        if output != expected_outputs[i]:
+            found = False
+            weights1 = np.random.randn(n, hidden1_neurons)
+            weights2 = np.random.randn(hidden1_neurons, hidden2_neurons)
+            weights3 = np.random.randn(hidden2_neurons)
+            break
+    
+    if found:
+        break
+
+# Results
+print(f"\nOutput matched in {training_step} steps.\n")
+print("Final Weights:")
+print("Weight 1 Matrix (Input → Hidden Layer 1):")
+print(weights1)
+
+print("\nWeight 2 Matrix (Hidden Layer 1 → Hidden Layer 2):")
+print(weights2)
+
+print("\nWeight 3 Vector (Hidden Layer 2 → Output):")
+print(weights3)
+
+print("\nExpected vs Output of Neural Network:")
+for i in range(total_cases):
+    print(f"Input: {inputs[i]} \t Expected: {expected_outputs[i]} \t Output: {outputs[i]}")
