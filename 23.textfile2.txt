@@ -1,0 +1,71 @@
+import re
+
+import nltk
+from nltk.corpus import stopwords
+from nltk.stem import PorterStemmer, WordNetLemmatizer
+from nltk.tokenize import word_tokenize
+from nltk.util import ngrams
+
+# Download necessary NLTK data
+nltk.download('punkt')
+nltk.download('stopwords')
+nltk.download('wordnet')
+
+# a. Text cleaning (remove punctuation, special characters, numbers, and extra spaces)
+def clean_text(text):
+    # Remove punctuation, special characters, and numbers using regular expression
+    text = re.sub(r'[^a-zA-Z\s]', '', text)  # Remove anything that's not a letter or space
+    # Remove extra white spaces
+    text = re.sub(r'\s+', ' ', text).strip()
+    return text
+
+# b. Convert text to lowercase
+def convert_to_lowercase(text):
+    return text.lower()
+
+# c. Stemming and Lemmatization
+def stemming_and_lemmatization(tokens):
+    ps = PorterStemmer()
+    lemmatizer = WordNetLemmatizer()
+
+    # Apply stemming and lemmatization
+    stemmed_words = [ps.stem(word) for word in tokens]
+    lemmatized_words = [lemmatizer.lemmatize(word) for word in stemmed_words]
+    
+    return lemmatized_words
+
+# d. Create a list of 3 consecutive words after lemmatization
+def generate_consecutive_ngrams(tokens):
+    # Create bigrams (2 consecutive words) and trigrams (3 consecutive words)
+    trigrams = list(ngrams(tokens, 3))
+    return trigrams
+
+# Main function to process text file
+def process_text(file_path):
+    with open(file_path, 'r') as file:
+        text = file.read()
+
+    # Step a: Clean the text
+    cleaned_text = clean_text(text)
+
+    # Step b: Convert to lowercase
+    cleaned_text = convert_to_lowercase(cleaned_text)
+
+    # Step c: Tokenize the text
+    tokens = word_tokenize(cleaned_text)
+
+    # Step c: Apply stemming and lemmatization
+    lemmatized_words = stemming_and_lemmatization(tokens)
+
+    # Step d: Create a list of 3 consecutive words (trigrams)
+    trigrams = generate_consecutive_ngrams(lemmatized_words)
+
+    # Output
+    print("3 consecutive words after lemmatization:")
+    for trigram in trigrams:
+        print(trigram)
+
+# Example usage
+if __name__ == "__main__":
+    file_path = "sample2.txt"  # Use the file sample2.txt
+    process_text(file_path)
