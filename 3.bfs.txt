@@ -1,0 +1,24 @@
+graph = {}
+n = int(input("Number of Edges: "))
+for i in range(n):
+    u, v = input("Enter edge (u v): ").split()
+    if u not in graph:
+        graph[u] = []
+    if v not in graph:
+        graph[v] = []
+    graph[u].append(v)
+    graph[v].append(u)  # because undirected graph
+
+visited=[]
+def bfs(start):
+    queue=[start]
+    while queue:
+        node = queue.pop(0)
+        if node not in visited:
+            print(node)
+            visited.append(node)
+        for neighbor in graph[node]:
+            queue.append(neighbor)
+
+start = input("Enter starting node: ")
+bfs(start)
