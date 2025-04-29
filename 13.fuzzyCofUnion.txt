@@ -1,0 +1,63 @@
+class FuzzySet:
+    def __init__(self, universe, memberships):
+        self.universe = universe
+        self.memberships = dict(zip(universe, memberships))
+    
+    def union(self, other):
+        # Union: max of memberships
+        union_set = {x: max(self.memberships.get(x, 0), other.memberships.get(x, 0)) for x in set(self.universe).union(set(other.universe))}
+        return FuzzySet(self.universe, [union_set[x] for x in self.universe])
+    
+    def intersection(self, other):
+        # Intersection: min of memberships
+        intersection_set = {x: min(self.memberships.get(x, 0), other.memberships.get(x, 0)) for x in set(self.universe).union(set(other.universe))}
+        return FuzzySet(self.universe, [intersection_set[x] for x in self.universe])
+    
+    def complement(self):
+        # Complement: 1 - membership value
+        complement_set = {x: 1 - self.memberships.get(x, 0) for x in self.universe}
+        return FuzzySet(self.universe, [complement_set[x] for x in self.universe])
+    
+    def display(self):
+        print(f"Universe: {self.universe}")
+        print(f"Memberships: {self.memberships}")
+
+# Define the universe (common elements across all fuzzy sets)
+universe = ['A', 'B', 'C', 'D', 'E']
+
+# Define two fuzzy sets
+fuzzy_set_1 = FuzzySet(universe, [0.8, 0.6, 0.9, 0.5, 0.7])
+fuzzy_set_2 = FuzzySet(universe, [0.4, 0.7, 0.8, 0.6, 0.5])
+
+# Display original fuzzy sets
+print("Fuzzy Set 1:")
+fuzzy_set_1.display()
+print("\nFuzzy Set 2:")
+fuzzy_set_2.display()
+
+# Perform union, intersection, and complement operations
+print("\nUnion of Fuzzy Set 1 and Fuzzy Set 2:")
+union_set = fuzzy_set_1.union(fuzzy_set_2)
+union_set.display()
+
+print("\nIntersection of Fuzzy Set 1 and Fuzzy Set 2:")
+intersection_set = fuzzy_set_1.intersection(fuzzy_set_2)
+intersection_set.display()
+
+print("\nComplement of Fuzzy Set 1:")
+complement_set_1 = fuzzy_set_1.complement()
+complement_set_1.display()
+
+print("\nComplement of Fuzzy Set 2:")
+complement_set_2 = fuzzy_set_2.complement()
+complement_set_2.display()
+
+# Demonstrate De Morgan's Law: (A ∪ B)' = A' ∩ B'
+print("\nDe Morgan's Law Demonstration:")
+print("\nLeft Side: Complement of Union (A ∪ B)'")
+union_complement = fuzzy_set_1.union(fuzzy_set_2).complement()
+union_complement.display()
+
+print("\nRight Side: Complement of A (A') ∩ Complement of B (B')")
+complement_1_intersection_2 = fuzzy_set_1.complement().intersection(fuzzy_set_2.complement())
+complement_1_intersection_2.display()
