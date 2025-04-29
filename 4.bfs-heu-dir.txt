@@ -1,0 +1,41 @@
+import heapq
+
+graph = {}
+heuristic = {}
+
+# Read directed unweighted graph from user input
+is_directed = True  # Directed graph
+
+n = int(input("Enter number of edges: "))
+for _ in range(n):
+    u, v = input("Enter edge (u v): ").split()
+    if u not in graph:
+        graph[u] = []
+    graph[u].append(v)
+
+# Read heuristic values from user input
+n = int(input("Enter number of heuristic values: "))
+for _ in range(n):
+    node, h = input("Enter node and heuristic (node h): ").split()
+    heuristic[node] = int(h)
+
+start = input("Enter start node: ")
+goal = input("Enter goal node: ")
+
+def best_first_search(start, goal):
+    visited = []
+    heap = [(heuristic[start], start)]
+
+    while heap:
+        h, node = heapq.heappop(heap)
+        if node == goal:
+            print("Reached goal:", node)
+            return
+        if node not in visited:
+            print("Visiting:", node)
+            visited.append(node)
+            for neighbor in graph.get(node, []):
+                if neighbor not in visited:
+                    heapq.heappush(heap, (heuristic[neighbor], neighbor))
+
+best_first_search(start, goal)
